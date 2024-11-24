@@ -1,5 +1,10 @@
 #define MAX_SIZE 10
 
+typedef struct {
+	button_event_t button_event;
+	led_event_t led_event;
+} event_data_t;
+
 typedef enum
 {
   LOW,
@@ -19,6 +24,6 @@ typedef struct {
 } PrioQueueHandle_t;
 
 typedef struct {
-	void (*callback_process_event)(pao_event_t*);
+	void (*callback_process_event)(queue_data_t*);
 	PrioQueueHandle_t event_queue_h;
 } pao_t;
