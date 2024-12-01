@@ -34,7 +34,7 @@ static void free_node(node_t* node) {
 // Function to create a new node
 static node_t* new_node(int d, int p)
 {
-	static int id = 0;
+    static int id = 0;
     node_t* temp = (node_t*)queue_get_free_node(sizeof(node_t));
     if (temp == NULL) return NULL;
     temp->data = d;
