@@ -52,7 +52,7 @@
 #define TASK_PERIOD_MS_           (5000)
 
 /********************** internal data declaration ****************************/
-
+static led_color_t evt;
 /********************** internal functions declaration ***********************/
 
 /********************** internal data definition *****************************/
@@ -63,7 +63,7 @@
 void init_led_active_object(active_object_t *led_obj,
                             void (*callback)(event_data_t),
                             uint8_t priority) {
-
+    led_obj->evt = &evt;
     led_obj->event_size = sizeof(int);
     active_object_init(led_obj, callback, 0, priority ,"Task LED", PRIORITIZED_QUEUE);
 }

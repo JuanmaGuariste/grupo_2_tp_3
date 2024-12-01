@@ -14,11 +14,11 @@
 typedef bool bool_t;
 typedef struct node {
     int data;
-
+    int id;
     // Lower values indicate
     // higher priority
     int priority;
-
+    bool_t used;
     struct node* next;
 
 } node_t;
@@ -28,6 +28,7 @@ typedef struct queue_p
     node_t *head;
     node_t *tail;
     uint32_t current_length;
+    bool_t initialized;
     SemaphoreHandle_t queue_mutex;
 } queue_p_t;
 
