@@ -55,11 +55,13 @@ void active_object_init(active_object_t *obj,
 }
 
 void active_object_send_event(active_object_t *obj, event_data_t event) {
+    configASSERT(obj != NULL || event != NULL);
     xQueueSend(obj->event_queue, event, 0);
 }
 
 bool_t active_object_send_priority_event(active_object_t *obj, int data, int priority) {
-   return queue_push(obj->event_queue, data, priority);
+    configASSERT(obj != NULL);
+    return queue_push(obj->event_queue, data, priority);
 }
 
 void active_object_task(void *pv_parameters) {

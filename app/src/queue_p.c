@@ -50,12 +50,13 @@ int queue_peek(queue_p_t* queue)
 
 void queue_create(queue_p_t **queue)
 {
-    if(queue) {
+    if(queue && !_queue.initialized) {
         *queue = &_queue;
         (*queue)->head = NULL;
         (*queue)->tail = NULL;
         (*queue)->current_length = 0;
         (*queue)->queue_mutex = xSemaphoreCreateMutex();
+        (*queue)->initialized = true;
         // Register to logging
         vQueueAddToRegistry((*queue)->queue_mutex, "Mutex Handle");
     }
@@ -80,6 +81,7 @@ void queue_destroy(queue_p_t **queue)
             (*queue)->head = NULL;
             (*queue)->tail = NULL;
             (*queue)->current_length = 0;
+            (*queue)->initialized = false;
         }
         xSemaphoreGive((*queue)->queue_mutex);
         // mutex destroy

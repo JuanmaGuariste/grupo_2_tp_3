@@ -28,6 +28,7 @@ typedef struct queue_p
     node_t *head;
     node_t *tail;
     uint32_t current_length;
+    bool_t initialized;
     SemaphoreHandle_t queue_mutex;
 } queue_p_t;
 
