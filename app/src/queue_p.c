@@ -4,6 +4,7 @@
  * 
  */
 #include "queue_p.h"
+#include "logger.h"
 
 #define QUEUE_P_LENGTH 10
 
@@ -33,11 +34,15 @@ static void free_node(node_t* node) {
 // Function to create a new node
 static node_t* new_node(int d, int p)
 {
+	static int id = 0;
     node_t* temp = (node_t*)queue_get_free_node(sizeof(node_t));
+    if (temp == NULL) return NULL;
     temp->data = d;
     temp->priority = p;
     temp->next = NULL;
-
+    temp->id = id; // Se añade para identificar nodos de igual prioridad
+    id++;
+    LOGGER_INFO("Se crea nodo, prioridad: %i id:%i",p,temp->id);
     return temp;
 }
 
@@ -100,6 +105,10 @@ bool_t queue_pop(queue_p_t* queue, int* data)
     xSemaphoreTake(queue->queue_mutex,portMAX_DELAY);
     {
         if(!queue_is_empty(queue)) {
+            LOGGER_INFO("Se quita nodo, prioridad: %i id:%i",
+                (queue->head)->priority,
+                (queue->head)->id);
+
             *data = queue->head->data;
             node_t* temp = queue->head;
             (queue->head) = (queue->head)->next;
@@ -149,14 +158,21 @@ bool_t queue_push(queue_p_t* queue, int d, int p)
                     start = start->next;
                 }
 
+                node_t *previous = start;
+                while (start->next != NULL
+                    && start->next->priority == p) {
+                    start = start->next;
+                    previous = start;
+                }
+
                 // Either at the ends of the list
                 // or at required position
-                temp->next = start->next;
-                start->next = temp;
+                temp->next = previous->next;
+                previous->next = temp;
             }
             ret = true;
         }
-        
+
     }
     xSemaphoreGive(queue->queue_mutex);
 

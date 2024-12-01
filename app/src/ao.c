@@ -14,14 +14,14 @@ static char *QUEUE_ID_3 = "Queue_id_3";
 static char *QUEUE_ID_4 = "Queue_id_4";
 static char *QUEUE_ID_DEF = "Queue_id_default";
 
- char *get_queue_name( uint8_t id) {
-     char *buffer[4] = { 0 };
-     if (id > 4) return QUEUE_ID_DEF;
+char *get_queue_name( uint8_t id) {
+    char *buffer[4] = { 0 };
+    if (id > 4) return QUEUE_ID_DEF;
 
-     buffer[0] = QUEUE_ID_1;
-     buffer[1] = QUEUE_ID_2;
-     buffer[2] = QUEUE_ID_3;
-     buffer[3] = QUEUE_ID_4;
+    buffer[0] = QUEUE_ID_1;
+    buffer[1] = QUEUE_ID_2;
+    buffer[2] = QUEUE_ID_3;
+    buffer[3] = QUEUE_ID_4;
 
     return buffer[id - 1];
 }
@@ -45,13 +45,12 @@ void active_object_init(active_object_t *obj,
     BaseType_t status;
     status = xTaskCreate(opt_queue == PRIORITIZED_QUEUE ? active_object_task_queue_priorized : active_object_task,
                             task_name,
-                            configMINIMAL_STACK_SIZE,
+                            configMINIMAL_STACK_SIZE*2,
                             obj,
                             task_priority,
                             NULL);
 
     configASSERT(pdPASS == status);
-//    LOGGER_INFO("Se inicializa el objeto activo id: %d, Tamaño del evento: %d",obj->obj_id, obj->event_size);
 }
 
 void active_object_send_event(active_object_t *obj, event_data_t event) {

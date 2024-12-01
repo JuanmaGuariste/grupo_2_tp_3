@@ -14,7 +14,7 @@
 typedef bool bool_t;
 typedef struct node {
     int data;
-
+    int id;
     // Lower values indicate
     // higher priority
     int priority;
