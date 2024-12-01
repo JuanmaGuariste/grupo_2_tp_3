@@ -49,7 +49,7 @@
 /********************** macros and definitions *******************************/
 
 /********************** internal data declaration ****************************/
-
+static button_event_t evt;
 /********************** internal functions declaration ***********************/
 
 /********************** internal data definition *****************************/
@@ -63,7 +63,7 @@
 void init_ui_active_object(active_object_t *ui_obj,
                             void (*callback)(event_data_t),
                             uint8_t priority) {
-
+    ui_obj->evt = &evt;
     ui_obj->event_size = (uint8_t)sizeof(button_event_t);
     active_object_init(ui_obj, callback, 5,priority,"Task_ui",FREE_RTOS_QUEUE);
 }

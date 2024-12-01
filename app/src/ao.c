@@ -64,7 +64,7 @@ bool_t active_object_send_priority_event(active_object_t *obj, int data, int pri
 
 void active_object_task(void *pv_parameters) {
     active_object_t *obj = (active_object_t *) pv_parameters;
-    event_data_t event = (event_data_t)pvPortMalloc(obj->event_size);
+    event_data_t event = obj->evt;
 
     for (;;) {
         xQueueReceive(obj->event_queue, event, portMAX_DELAY);
@@ -75,8 +75,7 @@ void active_object_task(void *pv_parameters) {
 
 void active_object_task_queue_priorized(void *pv_parameters) {
     active_object_t *obj = (active_object_t *) pv_parameters;
-    event_data_t event = (event_data_t)pvPortMalloc(obj->event_size);
-
+    event_data_t event = obj->evt;
     for (;;) {
         if (queue_pop(obj->event_queue, event) && obj->process_event != NULL)
         	obj->process_event(event);

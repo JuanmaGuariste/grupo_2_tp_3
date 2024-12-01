@@ -18,7 +18,7 @@ typedef struct node {
     // Lower values indicate
     // higher priority
     int priority;
-
+    bool_t used;
     struct node* next;
 
 } node_t;

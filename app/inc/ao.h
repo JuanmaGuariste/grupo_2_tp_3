@@ -23,6 +23,7 @@ typedef struct {
     event_callback_t process_event;
     uint8_t event_size;
     uint8_t obj_id;
+    void *evt;
 } active_object_t;
 
 void active_object_init(active_object_t *obj,

@@ -7,12 +7,33 @@
 
 #define QUEUE_P_LENGTH 10
 
+static node_t _list [QUEUE_P_LENGTH] = { 0 };
+static queue_p_t _queue;
 
+static node_t *queue_get_free_node() {
+    static uint8_t index = 0;
+    while (index < QUEUE_P_LENGTH)
+    {
+        if( _list[index].used == false){
+            _list[index].used = true;
+            return &_list[index];
+        }
+       index = (index + 1) % QUEUE_P_LENGTH;
+    }
+    return NULL;
+}
+
+static void free_node(node_t* node) {
+    node->used = false;
+    node->data = 0x00;
+    node->priority = 0x00;
+    node->next = NULL;
+}
 
 // Function to create a new node
 static node_t* new_node(int d, int p)
 {
-    node_t* temp = (node_t*)pvPortMalloc(sizeof(node_t));
+    node_t* temp = (node_t*)queue_get_free_node(sizeof(node_t));
     temp->data = d;
     temp->priority = p;
     temp->next = NULL;
@@ -30,7 +51,7 @@ int queue_peek(queue_p_t* queue)
 void queue_create(queue_p_t **queue)
 {
     if(queue) {
-        *queue = pvPortMalloc(sizeof(queue_p_t));
+        *queue = &_queue;
         (*queue)->head = NULL;
         (*queue)->tail = NULL;
         (*queue)->current_length = 0;
@@ -51,15 +72,18 @@ void queue_destroy(queue_p_t **queue)
 
             while (!next)
             {
-                vPortFree(current);
+                free_node(current);
                 current = next;
                 next = current->next;
             }
+
+            (*queue)->head = NULL;
+            (*queue)->tail = NULL;
+            (*queue)->current_length = 0;
         }
         xSemaphoreGive((*queue)->queue_mutex);
         // mutex destroy
         vSemaphoreDelete((*queue)->queue_mutex);
-        vPortFree(*queue);
         *queue = NULL;
     }
 }
@@ -78,7 +102,7 @@ bool_t queue_pop(queue_p_t* queue, int* data)
             node_t* temp = queue->head;
             (queue->head) = (queue->head)->next;
             queue->current_length--;
-            vPortFree(temp);
+            free_node(temp);
             ret = true;
         }
     }
@@ -99,6 +123,8 @@ bool_t queue_push(queue_p_t* queue, int d, int p)
 
             // Create new node_t
             node_t* temp = new_node(d, p);
+
+            if (temp == NULL) return false;
 
             queue->current_length++;
             if (queue_is_empty(queue)) {
