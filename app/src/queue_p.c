@@ -134,7 +134,7 @@ bool_t queue_push(queue_p_t* queue, int d, int p)
             // Create new node_t
             node_t* temp = new_node(d, p);
 
-            if (temp == NULL) return false;
+            if (temp == NULL) {xSemaphoreGive(queue->queue_mutex); return false;}
 
             queue->current_length++;
             if (queue_is_empty(queue)) {
