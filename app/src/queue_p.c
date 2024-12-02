@@ -11,20 +11,19 @@
 static node_t _list [QUEUE_P_LENGTH] = { 0 };
 static queue_p_t _queue;
 
-static node_t *queue_get_free_node() {
-    static uint8_t index = 0;
-    while (index < QUEUE_P_LENGTH)
-    {
-        if( _list[index].used == false){
+static node_t* queue_get_free_node()
+{
+    for (uint8_t index = 0; index < QUEUE_P_LENGTH; index++) {
+        if (!_list[index].used) {
             _list[index].used = true;
             return &_list[index];
         }
-       index = (index + 1) % QUEUE_P_LENGTH;
     }
     return NULL;
 }
 
-static void free_node(node_t* node) {
+static void free_node(node_t* node)
+{
     node->used = false;
     node->data = 0x00;
     node->priority = 0x00;
